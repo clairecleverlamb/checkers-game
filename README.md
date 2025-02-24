@@ -5,12 +5,12 @@
 A classic two-player checkers game with an interactive interface and rule-based logic.
 
 ## 🔗 Navigation
-- [Overview](#🎯-overview)
-- [Game Features](#🎮-game-features)
-- [Game Rules](#📜-game-rules)
-- [Game Data Structure](#🗂️-game-data-structure)
-- [Game Functions](#🏗️-game-functions)
-- [Future Enhancements](#🚀-future-enhancements)
+- [Overview](#🎯overview)
+- [Game Features](#🎮game-features)
+- [Game Rules](#📜game-rules)
+- [Game Data Structure](#🗂️game-data-structure)
+- [Game Functions](#🏗️game-functions)
+- [Future Enhancements](#🚀future-enhancements)
 ---
 
 ## 🎯 Overview
