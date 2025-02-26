@@ -126,6 +126,17 @@ function getBoardIndex(row, col) {
     return row * 4 + offset
 }
 
+function movePiece(toIndex) {
+    const fromIndex = selectPiece;
+    const piece boardState[fromIndex];
+    const rowFrom = Math.floor(fromIndex /4);
+    const rowTo = Math.floor(toIndex / 4);
+
+    
+
+
+}
+
 // Create Reset functionality.
 document.querySelector('.reset').addEventListener('click', () =>{
     boardState = Array(32).fill(null);
