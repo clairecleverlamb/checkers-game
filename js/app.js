@@ -1,8 +1,5 @@
-// planning 
-// Generate the 8x8 board programmatically.
-// Place the initial pieces (12 red, 12 black).
-// Add click-based movement with legal move validation.
-// style pieces later 
+
+// CHEKCERS game!! HAVE FUN!
 
 // Define the required variables used to track the state of the game.
 
@@ -10,11 +7,11 @@ let boardState = Array(32).fill(null);
 let currentPlayer = 'black';
 let selectedPiece = null;
 let validMoves = [];
+let moveHistory = [];
 
 // Store cached element references.
 
 const grid = document.querySelector('.grid');
-const squares = Array.from(grid.querySelectorAll('div'));
 const playableSquares = [
     // these are checkers notation 
     1, 3, 5, 7,      // Row 8: B8, D8, F8, H8 
@@ -41,7 +38,7 @@ const playableSquares = [
 
 // generate the checkers board
 function generateBoard() {
-    grid.textContent = '';
+    grid.innerHTML = '';
     for (let row = 8; row >= 1; row--) {
         for (let col = 0; col < 8; col++) {
             let square = document.createElement('div');
@@ -51,6 +48,8 @@ function generateBoard() {
     }
 }
 generateBoard();
+
+const squares = Array.from(grid.querySelectorAll('div'));
 
 // Upon loading, the game state should be initialized, and a function should 
 //   be called to render this game state.
@@ -92,8 +91,13 @@ function renderBoard() {
 //  fixing eventListener here 
 
 playableSquares.forEach((gridIdx, boardIdx) => {
-    squares[gridIdx].dataset.boardIdx = boardIdx;
-    squares[gridIdx].addEventListener('click', handleSquareClick);
+    const square = squares[gridIdx];
+    if (square) {
+        square.setAttribute('board-idx', boardIdx);
+        square.addEventListener('click', handleSquareClick);
+    } else {
+        console.log(`${gridIdx} is undefined`);
+    }
 });
 
 
@@ -112,7 +116,6 @@ function handleSquareClick(el) {
         }
     }
 }
-
 
 function selectPiece(boardIdx) {
     selectedPiece = boardIdx;
@@ -227,11 +230,20 @@ function movePiece(toIndex) {
             boardState[index] && boardState[index].player !== piece.player
         );
         if (midIndex !== undefined) {
-            capturedIndex = midIndex;
+            capturedIdx = midIndex;
             boardState[midIndex] = null;
             squares[playableSquares[midIndex]].removeChild(squares[playableSquares[midIndex]].firstChild);
         }
     }
+
+    // store the move 
+    moveHistory.push({
+        from: fromIndex,
+        to: toIndex,
+        captured: capturedIdx,
+        player: piece.player,
+        becameKing: (piece.player === 'black' && rowTo === 7) || (piece.player === 'white' && rowTo === 0)
+    })
 
     // move piece here 
     boardState[toIndex] = piece;
@@ -243,7 +255,7 @@ function movePiece(toIndex) {
     // King promotion
     if ((piece.player === 'black' && rowTo === 7) || (piece.player === 'white' && rowTo === 0)) {
         piece.king = true;
-        squares[toGrid].firstChild.classList.add('king');
+        toSquare.firstChild.classList.add('king');
     }
 
     // enforcing multi-jumps and turn management 
@@ -262,8 +274,39 @@ function movePiece(toIndex) {
     }
 }
 
+
+// undo button: 
+document.querySelector('.undo').addEventListener('click', () => {
+    if (moveHistory.length > 0) {
+        const lastMove = moveHistory.pop();
+        const { from, to, captured, player, becameKing } = lastMove;
+
+        // Reverse the move
+        boardState[from] = boardState[to];
+        boardState[to] = null;
+        if (captured !== null) {
+            boardState[captured] = { player: player === 'black' ? 'white' : 'black', king: false };
+            squares[playableSquares[captured]].appendChild(createPiece(player === 'black' ? 'white' : 'black'));
+        }
+        squares[playableSquares[from]].appendChild(squares[playableSquares[to]].firstChild);
+        if (becameKing) boardState[from].king = false;
+
+        currentPlayer = player;
+        deselectPiece();
+    }
+});
+
+function createPiece(player) {
+    const piece = document.createElement('div');
+    piece.classList.add('piece', `${player}-piece`);
+    return piece;
+}
+
+
+
 // Create Reset functionality.
 document.querySelector('.reset').addEventListener('click', () => {
+    moveHistory = [];
     boardState = Array(32).fill(null);
     currentPlayer = 'black';
     selectPiece = null;
