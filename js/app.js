@@ -4,14 +4,14 @@
 // Add click-based movement with legal move validation.
 // style pieces later 
 
-// //1) Define the required variables used to track the state of the game.
+// Define the required variables used to track the state of the game.
 
 let boardState = Array(32).fill(null);
 let currentPlayer = 'black';
 let selectedPiece = null;
 let validMoves = [];
 
-//2) Store cached element references.
+// Store cached element references.
 
 const grid = document.querySelector('.grid');
 const squares = Array.from(grid.querySelectorAll('div'));
@@ -38,7 +38,7 @@ function generateBoard(){
         }
     }
 }
-//3) Upon loading, the game state should be initialized, and a function should 
+// Upon loading, the game state should be initialized, and a function should 
 //   be called to render this game state.
 
 function initBoard() {
@@ -53,6 +53,8 @@ function initBoard() {
     renderBoard();
 }
 
+
+// The state of the game should be rendered to the user.
 function renderBoard(){
     // clear current pieces
     squares.forEach(squares => {
@@ -60,6 +62,7 @@ function renderBoard(){
             squares.removeChild(square.firstChild);
         }
     });
+
     // place pieces
     playableSquares.forEach((gridIdx, boardIdx) => {
         if (boardState[boardIdx]) {
@@ -75,14 +78,38 @@ function renderBoard(){
 
 playableSquares.forEach((gridIdx, boardIdx) => {
     squares[gridIdx].dataset.boardIdx = boardIdx;
-})
-//4) The state of the game should be rendered to the user.
+    squares[gridIdx].addEventListener('click', handleSquareClick);
+});
 
-//5) Define the required constants.
 
-//6) Handle a player clicking a square with a `handleClick` function.
+// Handle a player clicking a square with a `handleClick` function.
+function handleSquareClick(el){
+    const boardIdx = parseInt(el.target.dataset.boardIdx);
+}
 
-//7) Create Reset functionality.
+
+function selectPiece(boardIdx) {
+    selectedPiece = boardIdx; 
+    const gridIdx = playableSquares[boardIdx];
+    squares[gridIdx].firstChild.classList.add('selected');
+    validMoves = getValidMoves(boardIdx);
+}
+
+
+function getValidMoves(boardIdx){
+    const piece = boardState[boardIdx];
+    if (!piece) return [];
+    const isKing = piece.king;
+    const player = piece.player;
+    const row = Math.floor(boardIdx / 4);
+    const offset = boardIdx % 4;  // 0,1,2,3, help styling 
+    const col = row % 2 === 0 ? 2*offset + 1 : 2*offset; // col where pieces go
+    const forward = player === 'black'? 1 : -1; 
+}
+
+
+
+// Create Reset functionality.
 
 
 
