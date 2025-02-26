@@ -16,7 +16,8 @@ let validMoves = [];
 const grid = document.querySelector('.grid');
 const squares = Array.from(grid.querySelectorAll('div'));
 const playableSquares = [
-  1, 3, 5, 7,      // Row 8: B8, D8, F8, H8
+                   // these are checkers notation 
+  1, 3, 5, 7,      // Row 8: B8, D8, F8, H8 
   8, 10, 12, 14,   // Row 7: A7, C7, E7, G7
   17, 19, 21, 23,  // Row 6: B6, D6, F6, H6
   24, 26, 28, 30,  // Row 5: A5, C5, E5, G5
@@ -104,13 +105,35 @@ function getValidMoves(boardIdx){
     const row = Math.floor(boardIdx / 4);
     const offset = boardIdx % 4;  // 0,1,2,3, help styling 
     const col = row % 2 === 0 ? 2*offset + 1 : 2*offset; // col where pieces go
-    const forward = player === 'black'? 1 : -1; 
+    const forward = player === 'black'? -1 : 1; // black down and white up
+    const directions = isKing? [-1,1] : [forward];
+    let moves = [];
+    let captures = [];
+
+    for (let dir of directions){
+
+    }
+
+
 }
 
-
+function getBoardIndex(row, col) {
+    if (row < 0 || row > 7 || col < 0 || col > 7) return null;
+    // reach Row 8, col 1, we need getBoardIndex(7,1) offset = 1/2 = 0; idx = 7 * 4 + 0 = 28; 
+    const isDark = (row % 2 === 0 && col % 2 === 1) || (row % 2 === 1 && col % 2 === 0);
+    if (!isDark) return null;
+    const offset = Math.floor(col/2);
+    return row * 4 + offset
+}
 
 // Create Reset functionality.
-
+document.querySelector('.reset').addEventListener('click', () =>{
+    boardState = Array(32).fill(null);
+    currentPlayer = 'black';
+    selectPiece = null;
+    validMoves = [];
+    initBoard();
+});
 
 
 
