@@ -6,7 +6,7 @@
 
 // //1) Define the required variables used to track the state of the game.
 
-let boardState;
+let boardState = Array(32).fill(null);
 let currentPlayer = 'black';
 let selectedPiece = null;
 let validMoves = [];
@@ -38,12 +38,11 @@ function generateBoard(){
         }
     }
 }
-
 //3) Upon loading, the game state should be initialized, and a function should 
 //   be called to render this game state.
 
 function initBoard() {
-    generateBoard(); 
+    generateBoard();
     // place 12 black pieces 0-11
     for (let i = 0; i < 12; i++) {
         boardState[i] = { player: 'black', king: false };
@@ -51,11 +50,32 @@ function initBoard() {
     for (let i = 20; i < 32; i++){
         boardState[i] = { player: "white", king: false };
     }
-    
+    renderBoard();
 }
 
+function renderBoard(){
+    // clear current pieces
+    squares.forEach(squares => {
+        while (squares.firstChild) {
+            squares.removeChild(square.firstChild);
+        }
+    });
+    // place pieces
+    playableSquares.forEach((gridIdx, boardIdx) => {
+        if (boardState[boardIdx]) {
+            const piece = document.createElement('div');
+            piece.classList.add('piece', `${boardState[boardIdx].player}-piece`);
+            if (boardState[boardIdx].king){
+                piece.classList.add('king');
+            }
+            squares[gridIdx].appendChild(piece);
+        }
+    });
+}
 
-
+playableSquares.forEach((gridIdx, boardIdx) => {
+    squares[gridIdx].dataset.boardIdx = boardIdx;
+})
 //4) The state of the game should be rendered to the user.
 
 //5) Define the required constants.
@@ -68,4 +88,4 @@ function initBoard() {
 
 
 // Initial setup 
-window.onload =  initBoard;
+initBoard();
