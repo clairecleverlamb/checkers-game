@@ -12,6 +12,9 @@ let moveHistory = [];
 // Store cached element references.
 
 const grid = document.querySelector('.grid');
+const status = document.querySelector('.status');
+
+
 const playableSquares = [
     // these are checkers notation 
     1, 3, 5, 7,      // Row 8: B8, D8, F8, H8 
@@ -55,7 +58,6 @@ const squares = Array.from(grid.querySelectorAll('div'));
 //   be called to render this game state.
 
 function initBoard() {
-    generateBoard();
     // place 12 black pieces 0-11
     for (let i = 0; i < 12; i++) {
         boardState[i] = { player: 'black', king: false };
@@ -103,8 +105,8 @@ playableSquares.forEach((gridIdx, boardIdx) => {
 
 // Handle a player clicking a square with a `handleClick` function.
 function handleSquareClick(el) {
-    const boardIdx = parseInt(el.target.dataset.boardIdx);
-    if (selectPiece === null) {
+    const boardIdx = parseInt(el.currentTarget.getAttribute('board-idx'));
+    if (selectedPiece === null) {
         if (boardState[boardIdx] && boardState[boardIdx].player === currentPlayer) {
             selectPiece(boardIdx);
         }
@@ -211,6 +213,7 @@ function getBoardIndex(row, col) {
 }
 
 function movePiece(toIndex) {
+    const currentPlayer = 'black';
     const fromIndex = selectedPiece;
     const piece = boardState[fromIndex];
     const rowFrom = Math.floor(fromIndex / 4);
