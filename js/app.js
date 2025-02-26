@@ -16,7 +16,7 @@ let validMoves = [];
 const grid = document.querySelector('.grid');
 const squares = Array.from(grid.querySelectorAll('div'));
 const playableSquares = [
-                     // these are checkers notation 
+    // these are checkers notation 
     1, 3, 5, 7,      // Row 8: B8, D8, F8, H8 
     8, 10, 12, 14,   // Row 7: A7, C7, E7, G7
     17, 19, 21, 23,  // Row 6: B6, D6, F6, H6
@@ -100,12 +100,12 @@ playableSquares.forEach((gridIdx, boardIdx) => {
 // Handle a player clicking a square with a `handleClick` function.
 function handleSquareClick(el) {
     const boardIdx = parseInt(el.target.dataset.boardIdx);
-    if (selectPiece === null){
-        if(boardState[boardIdx] && boardState[boardIdx].player === currentPlayer){
+    if (selectPiece === null) {
+        if (boardState[boardIdx] && boardState[boardIdx].player === currentPlayer) {
             selectPiece(boardIdx);
         }
     } else {
-        if (validMoves.includes(boardIdx)){
+        if (validMoves.includes(boardIdx)) {
             movePiece(boardIdx);
         } else {
             deselectPiece();
@@ -145,16 +145,55 @@ function getValidMoves(boardIdx) {
     const row = Math.floor(boardIdx / 4);
     const offset = boardIdx % 4;  // 0,1,2,3, help styling 
     const col = row % 2 === 0 ? 2 * offset + 1 : 2 * offset; // col where pieces go
-    const forward = player === 'black' ? -1 : 1; // black down and white up
+    const forward = player === 'black' ? -1 : 1; // black down(row-1) and white up
     const directions = isKing ? [-1, 1] : [forward];
     let moves = [];
     let captures = [];
 
     for (let dir of directions) {
-
+        const leftCol = col - 1;
+        const rightCol = col + 1;
+        const targetRow = row + dir;
+        if (targetRow >= 0 && targetRow < 8) {
+            // left jump 
+            if (leftCol >= 0) {
+                const targetIdx = getBoardIndex(targetRow, leftCol);
+                if (targetIdx !== null) {
+                    if (!boardState[targetIdx]) {  //check if already occupied 
+                        moves.push(targetIdx);
+                    } else if (boardState[targetIdx].player !== player) {
+                        const jumpRow = targetRow + dir;
+                        const jumpCol = leftCol - 1; // -2 in total 
+                        if (jumpRow >= 0 && jumpRow < 8 && jumpCol >= 0) {
+                            const jumpIdx = getBoardIndex(jumpRow, jumpCol);
+                            if (jumpIdx !== null && !boardState[jumpIdx]) {
+                                captures.push(jumpIdx);
+                            }
+                        }
+                    }
+                }
+            }
+            // right jump 
+            if (rightCol < 8) {
+                const targetIdx = getBoardIndex(targetRow, rightCol);
+                if (targetIdx !== null) {
+                    if (!boardState[targetIdx]) {
+                        moves.push(targetIdx);
+                    } else if (boardState[targetIdx].player !== player) {
+                        const jumpRow = targetRow + dir;
+                        const jumpCol = rightCol + 1;
+                        if (jumpRow >= 0 && jumpRow < 8 && jumpCol < 8) {
+                            const jumpIdx = getBoardIndex(jumpRow, jumpCol);
+                            if (jumpIdx !== null && !boardState[jumpIdx]) {
+                                captures.push(jumpIdx);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-
-
+    return captures.length > 0 ? captures : moves;   // prioritize captures 
 }
 
 
@@ -169,28 +208,37 @@ function getBoardIndex(row, col) {
 }
 
 function movePiece(toIndex) {
-    const fromIndex = selectPiece;
+    const fromIndex = selectedPiece;
     const piece = boardState[fromIndex];
     const rowFrom = Math.floor(fromIndex / 4);
     const rowTo = Math.floor(toIndex / 4);
+    let capturedIdx = null;
 
     // captures 
     if (Math.abs(rowTo - rowFrom) === 2) {
-        const midRow = (rowFrom + rowTo) / 2;
-        const colFrom = rowFrom % 2 === 0 ? 2 * (fromIndex % 4) : 2 * (fromIndex % 4) + 1;
-        const colTo = rowTo % 2 === 0 ? 2 * (toIndex % 4) : 2 * (toIndex % 4) + 1;
-        const midCol = (colFrom + colTo) / 2;
-        const midIndex = getBoardIndex(midRow, midCol);
-        boardState[midIndex] = null;
-        squares[playableSquares[midIndex]].removeChild(squares[playableSquares[midIndex]].firstChild);
+        const possibleMidIndices = [
+            fromIndex - 5, fromIndex - 3, fromIndex + 3, fromIndex + 5
+        ].filter(index =>
+            index >= 0 && index < 32 &&
+            Math.floor(index / 4) === (rowFrom + rowTo) / 2 &&
+            Math.abs(toIndex - index) === Math.abs(fromIndex - index)
+        );
+        const midIndex = possibleMidIndices.find(index =>
+            boardState[index] && boardState[index].player !== piece.player
+        );
+        if (midIndex !== undefined) {
+            capturedIndex = midIndex;
+            boardState[midIndex] = null;
+            squares[playableSquares[midIndex]].removeChild(squares[playableSquares[midIndex]].firstChild);
+        }
     }
 
     // move piece here 
     boardState[toIndex] = piece;
     boardState[fromIndex] = null;
-    const fromGrid = playableSquares[fromIndex];
-    const toGrid = playableSquares[toIndex];
-    squares[toGrid].appendChild(squares[fromGrid].firstChild);
+    const fromSquare = squares[playableSquares[fromIndex]];
+    const toSquare = squares[playableSquares[toIndex]];
+    toSquare.appendChild(fromSquare.firstChild);
 
     // King promotion
     if ((piece.player === 'black' && rowTo === 7) || (piece.player === 'white' && rowTo === 0)) {
