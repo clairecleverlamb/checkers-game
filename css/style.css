@@ -113,6 +113,33 @@ button:hover {
     display: none;
 }
 
+
+.selected {
+    border: 3px solid #ffd700 !important;
+    /* Gold border for selected piece */
+}
+
+.valid-move {
+    background-color: rgba(255, 215, 0, 0.5);
+    /* Semi-transparent gold for valid moves */
+}
+
+.king {
+    position: relative;
+}
+
+.king::after {
+    content: '👑';
+    /*indicate king */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: #ffd700;
+}
+
+
 .reset-container {
     display: flex;
     justify-content: center;
