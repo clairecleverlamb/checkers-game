@@ -14,7 +14,7 @@ let moveHistory = [];
 const grid = document.querySelector('.grid');
 const status = document.querySelector('.status');
 
-
+// grid index 
 const playableSquares = [
     56, 58, 60, 62,  // Row 1: A1=0, C1=1, E1=2, G1=3
     49, 51, 53, 55,  // Row 2: B2=4, D2=5, F2=6, H2=7
@@ -25,18 +25,18 @@ const playableSquares = [
     8, 10, 12, 14,   // Row 7: A7=24, C7=25, E7=26, G7=27
     1, 3, 5, 7       // Row 8: B8=28, D8=29, F8=30, H8=31
 ];
-//   indexing 
-//   [ 
-//     28, 29, 30, 31,
-//     24, 25, 26, 27,
-//     20, 21, 22, 23, 
-//     16, 17, 18, 19,
-//     12, 13, 14, 15, 
-//      8,  9, 10, 11, 
-//      4,  5,  6,  7,
-//      0,  1,  2,  3,
-//   ]
 
+// board-index 
+// [  
+//     0, 1, 2, 3, 
+//     4, 5, 6, 7,
+//     8, 9, 10, 11, 
+//     12, 13, 14, 15, 
+//     16, 17, 18, 19,
+//     20, 21, 22, 23, 
+//     24, 25, 26, 27,
+//     28, 29, 30, 31,
+//   ]
 
 // generate the checkers board
 function generateBoard() {
@@ -97,6 +97,7 @@ playableSquares.forEach((gridIdx, arrayIdx) => {
     const square = squares[gridIdx];
     if (square) {
         square.setAttribute('board-idx', arrayIdx);
+        // console.log(`Assigned board-idx: ${arrayIdx} to grid index: ${gridIdx}`); 
         square.addEventListener('click', handleSquareClick);
     } else {
         console.log(`${gridIdx} is undefined`);
@@ -104,39 +105,12 @@ playableSquares.forEach((gridIdx, arrayIdx) => {
 });
 
 
-// Handle square clicks
-function handleSquareClick(el) {
-    // console.log("square clicked: ", el.currentTarget); great it works!
-    const square = el.currentTarget;
-    const boardIdx = parseInt(square.getAttribute('board-idx'));
-    if (selectedPiece === null) {
-        if (boardState[boardIdx] && boardState[boardIdx].player === currentPlayer) {
-            selectPiece(boardIdx);
-        }
-    } else {
-        if (validMoves.includes(boardIdx)) {
-            movePiece(boardIdx);
-        } else {
-            deselectPiece();
-        }
-    }
-}
-// Convert boardIdx to gridIdx 
-function getGridIdxFromBoardIdx(boardIdx) {
-    const idxInPlayable = playableSquares.findIndex(gridIdx => 
-        parseInt(squares[gridIdx].getAttribute('board-idx')) === boardIdx
-    );
-    if(idxInPlayable === -1) {
-        console.error(`No grid found for boardIdx" ${boardIdx}`);
-        return null;
-    }
-    return playableSquares[idxInPlayable];
-}
-
 function selectPiece(boardIdx) {
     selectedPiece = boardIdx;
+    console.log("trying to select piece at index: ",boardIdx);
+
     const gridIdx = getGridIdxFromBoardIdx(boardIdx);
-    if(gridIdx === null || !squares[gridIdx.firstChild]) return;
+    if (gridIdx === null || !squares[gridIdx].firstChild) return;
     squares[gridIdx].firstChild.classList.add('selected');
     validMoves = getValidMoves(boardIdx);
     validMoves.forEach(moveIdx => {
@@ -158,6 +132,38 @@ function deselectPiece() {
         selectedPiece = null;
         validMoves = [];
     }
+}
+
+
+// Handle square clicks
+function handleSquareClick(evt) {
+    // console.log("square clicked: ", el.currentTarget); great it works!
+    const square = evt.currentTarget;
+    const boardIdx = parseInt(square.getAttribute('board-idx'));
+    if (selectedPiece === null) {
+        if (boardState[boardIdx] && boardState[boardIdx].player === currentPlayer) {
+            selectPiece(boardIdx);
+        }
+    } else {
+        if (validMoves.includes(boardIdx)) {
+            movePiece(boardIdx);
+        } else {
+            deselectPiece();
+        }
+    }
+}
+
+
+// Convert boardIdx to gridIdx 
+function getGridIdxFromBoardIdx(boardIdx) {
+    const idxInPlayable = playableSquares.findIndex(gridIdx => 
+        parseInt(squares[gridIdx].getAttribute('board-idx')) === boardIdx
+    );
+    if(idxInPlayable === -1) {
+        console.error(`No grid found for boardIdx" ${boardIdx}`);
+        return null;
+    }
+    return playableSquares[idxInPlayable];
 }
 
 
@@ -218,6 +224,7 @@ function getValidMoves(boardIdx) {
         }
     }
     return captures.length > 0 ? captures : moves;   // prioritize captures 
+    console.log("checking valid moves for: ", boardIdx);
 }
 
 
@@ -230,12 +237,11 @@ function getBoardIndex(row, col) {
     const offset = Math.floor(col / 2);
     return row * 4 + offset
 }
-console.log(getBoardIndex(7, 1));
 
 
 function movePiece(toIndex) {
     const fromIndex = selectedPiece;
-    const piece = boardState[fromIndex];
+    // const piece = boardState[fromIndex];
     const rowFrom = Math.floor(fromIndex / 4);
     const rowTo = Math.floor(toIndex / 4);
     let capturedIdx = null;
@@ -302,9 +308,6 @@ function movePiece(toIndex) {
     }
 }
 
-function checkWin() {
-
-}
 
 // undo button: 
 document.querySelector('.undo').addEventListener('click', () => {
