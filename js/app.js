@@ -58,6 +58,7 @@ const squares = Array.from(grid.querySelectorAll('div'));
 //   be called to render this game state.
 
 function initBoard() {
+    boardState = Array(32).fill(null);
     // place 12 black pieces 0-11
     for (let i = 0; i < 12; i++) {
         boardState[i] = { player: 'black', king: false };
@@ -66,6 +67,7 @@ function initBoard() {
         boardState[i] = { player: "white", king: false };
     }
     renderBoard();
+    status.textContent = "Black's Turn";
 }
 
 
@@ -79,7 +81,8 @@ function renderBoard() {
     });
 
     // place pieces
-    playableSquares.forEach((gridIdx, boardIdx) => {
+    playableSquares.forEach((gridIdx, arrayIdx) => {
+        const boardIdx = 31 - arrayIdx;
         if (boardState[boardIdx]) {
             const piece = document.createElement('div');
             piece.classList.add('piece', `${boardState[boardIdx].player}-piece`);
@@ -92,10 +95,10 @@ function renderBoard() {
 }
 //  fixing eventListener here 
 
-playableSquares.forEach((gridIdx, boardIdx) => {
+playableSquares.forEach((gridIdx, arrayIdx) => {
     const square = squares[gridIdx];
     if (square) {
-        square.setAttribute('board-idx', boardIdx);
+        square.setAttribute('board-idx', 31 - arrayIdx);
         square.addEventListener('click', handleSquareClick);
     } else {
         console.log(`${gridIdx} is undefined`);
@@ -105,7 +108,8 @@ playableSquares.forEach((gridIdx, boardIdx) => {
 
 // Handle a player clicking a square with a `handleClick` function.
 function handleSquareClick(el) {
-    const boardIdx = parseInt(el.currentTarget.getAttribute('board-idx'));
+    const square = el.currentTarget;
+    const boardIdx = parseInt(square.getAttribute('board-idx'));
     if (selectedPiece === null) {
         if (boardState[boardIdx] && boardState[boardIdx].player === currentPlayer) {
             selectPiece(boardIdx);
@@ -118,23 +122,34 @@ function handleSquareClick(el) {
         }
     }
 }
+// helper function 
+function getGridIdxFromBoardIdx(boardIdx) {
+    const idxInPlayable = playableSquares.findIndex(gridIdx => {
+        parseInt(squares[gridIdx].getAttribute('board-idx')) === boardIdx
+    });
+    return playableSquares[idxInPlayable];
+}
 
 function selectPiece(boardIdx) {
     selectedPiece = boardIdx;
-    const gridIdx = playableSquares[boardIdx];
+    const gridIdx = getGridIdxFromBoardIdx(boardIdx);
     squares[gridIdx].firstChild.classList.add('selected');
     validMoves = getValidMoves(boardIdx);
-    validMoves.forEach(moveidx => {
-        squares[playableSquares[moveidx]].classList.add('valid-move');
+    validMoves.forEach(moveIdx => {
+        const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
+        squares[moveGridIdx].classList.add('valid-move');
     });
 }
 
 function deselectPiece() {
-    if (selectPiece !== null) {
-        const gridIdx = playableSquares[selectPiece];
-        squares[gridIdx].firstChild.classList.remove('selected');
+    if (selectedPiece !== null) {
+        const gridIdx = getGridIdxFromBoardIdx(selectedPiece);
+        if (squares[gridIdx].firstChild) {
+            squares[gridIdx].firstChild.classList.remove('selected');
+        }
         validMoves.forEach(moveIdx => {
-            squares[playableSquares[moveIdx]].classList.remove('valid-move');
+            const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
+            squares[moveGridIdx].classList.remove('valid-move');
         });
         selectPiece = null;
         validMoves = [];
@@ -148,7 +163,7 @@ function getValidMoves(boardIdx) {
     const isKing = piece.king;
     const player = piece.player;
     const row = Math.floor(boardIdx / 4);
-    const offset = boardIdx % 4;  // 0,1,2,3, help styling 
+    const offset = boardIdx % 4;  // 0,1,2,3, help keep track
     const col = row % 2 === 0 ? 2 * offset + 1 : 2 * offset; // col where pieces go
     const forward = player === 'black' ? -1 : 1; // black down(row-1) and white up
     const directions = isKing ? [-1, 1] : [forward];
@@ -213,7 +228,6 @@ function getBoardIndex(row, col) {
 }
 
 function movePiece(toIndex) {
-    const currentPlayer = 'black';
     const fromIndex = selectedPiece;
     const piece = boardState[fromIndex];
     const rowFrom = Math.floor(fromIndex / 4);
@@ -235,7 +249,8 @@ function movePiece(toIndex) {
         if (midIndex !== undefined) {
             capturedIdx = midIndex;
             boardState[midIndex] = null;
-            squares[playableSquares[midIndex]].removeChild(squares[playableSquares[midIndex]].firstChild);
+            const midGridIdx = getGridIdxFromBoardIdx(midIndex);
+            squares[midGridIdx].removeChild(squares[midGridIdx].firstChild);
         }
     }
 
@@ -251,8 +266,10 @@ function movePiece(toIndex) {
     // move piece here 
     boardState[toIndex] = piece;
     boardState[fromIndex] = null;
-    const fromSquare = squares[playableSquares[fromIndex]];
-    const toSquare = squares[playableSquares[toIndex]];
+    const fromGridIdx = getGridIdxFromBoardIdx(fromIndex);
+    const toGridIdx = getGridIdxFromBoardIdx(toIndex);
+    const fromSquare = squares[fromGridIdx];
+    const toSquare = squares[toGridIdx];
     toSquare.appendChild(fromSquare.firstChild);
 
     // King promotion
@@ -267,16 +284,21 @@ function movePiece(toIndex) {
         move => Math.abs(Math.floor(move / 4) - rowTo) === 2
     );
     if (newCaptures.length > 0) {
-        selectPiece = toIndex;
+        selectedPiece = toIndex;
         validMoves = newCaptures;
         deselectPiece();
         selectPiece(toIndex);
     } else {
         deselectPiece();
         currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+        renderBoard();
+        checkWin();
     }
 }
 
+function checkWin() {
+
+}
 
 // undo button: 
 document.querySelector('.undo').addEventListener('click', () => {
@@ -318,6 +340,4 @@ document.querySelector('.reset').addEventListener('click', () => {
 });
 
 
-
-// Initial setup 
 initBoard();
