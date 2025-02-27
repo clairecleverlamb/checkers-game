@@ -221,7 +221,7 @@ function movePiece(toIndex) {
     // Move piece
     movePieceOnBoard(fromIndex, toIndex, piece);
     // King Promotion
-    if ((piece.player === 'black' && rowTo === 7) || (piece.player === 'white' && rowTo === 0)) {
+    if ((piece.player === 'black' && rowTo === 0) || (piece.player === 'white' && rowTo === 7)) {
         makeKing(piece, toIndex);
     }
     handleMultiJumpOrEndTurn(toIndex, rowTo);
@@ -267,6 +267,7 @@ function makeKing(piece, toIndex) {
     piece.king = true;
     const toGridIdx = getGridIdxFromBoardIdx(toIndex);
     squares[toGridIdx].firstChild.classList.add('king');
+    console.log(`Promoted to king at ${toIndex}, king: ${piece.king}`);
 }
 
 
