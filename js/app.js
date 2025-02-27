@@ -91,12 +91,12 @@ function renderBoard() {
         }
     });
 }
-//  fixing eventListener here 
+
 
 playableSquares.forEach((gridIdx, arrayIdx) => {
     const square = squares[gridIdx];
     if (square) {
-        square.setAttribute('board-idx', 31 - arrayIdx);
+        square.setAttribute('board-idx', arrayIdx);
         square.addEventListener('click', handleSquareClick);
     } else {
         console.log(`${gridIdx} is undefined`);
@@ -104,8 +104,9 @@ playableSquares.forEach((gridIdx, arrayIdx) => {
 });
 
 
-// Handle a player clicking a square with a `handleClick` function.
+// Handle square clicks
 function handleSquareClick(el) {
+    // console.log("square clicked: ", el.currentTarget); great it works!
     const square = el.currentTarget;
     const boardIdx = parseInt(square.getAttribute('board-idx'));
     if (selectedPiece === null) {
@@ -120,11 +121,11 @@ function handleSquareClick(el) {
         }
     }
 }
-// helper function 
+// Convert boardIdx to gridIdx 
 function getGridIdxFromBoardIdx(boardIdx) {
-    const idxInPlayable = playableSquares.findIndex(gridIdx => {
-        parseInt(squares[gridIdx].getAttribute('board-idx')) === boardIdx;
-    });
+    const idxInPlayable = playableSquares.findIndex(gridIdx => 
+        parseInt(squares[gridIdx].getAttribute('board-idx')) === boardIdx
+    );
     if(idxInPlayable === -1) {
         console.error(`No grid found for boardIdx" ${boardIdx}`);
         return null;
@@ -224,7 +225,7 @@ function getValidMoves(boardIdx) {
 function getBoardIndex(row, col) {
     if (row < 0 || row > 7 || col < 0 || col > 7) return null;
     // reach Row 8, col 1, we need getBoardIndex(7,1) offset = 1/2 = 0; idx = 7 * 4 + 0 = 28; 
-    const isDark = (row % 2 === 0 && col % 2 === 1) || (row % 2 === 1 && col % 2 === 0);
+    const isDark = (row % 2 === col % 2);
     if (!isDark) return null;
     const offset = Math.floor(col / 2);
     return row * 4 + offset
@@ -309,7 +310,7 @@ function checkWin() {
 document.querySelector('.undo').addEventListener('click', () => {
     if (moveHistory.length > 0) {
         const lastMove = moveHistory.pop();
-        const { from, to, captured, player, becameKing } = lastMove;
+        const {from, to, captured, player, becameKing} = lastMove;
 
         // Reverse the move
         boardState[from] = boardState[to];
@@ -352,7 +353,7 @@ function checkWin() {
     else if (whitePieces === 0) winner = 'Black';
     else {
         const playerPieces = boardState.filter(piece => piece && piece.player === currentPlayer);
-        const hasMoves = playerPieces.some(pieceIdx => {
+        const hasMoves = playerPieces.some(pieceIdx => {  // using some()
             const idx = boardState.indexOf(pieceIdx);
             return getValidMoves(idx).length > 0;
         });
