@@ -107,7 +107,7 @@ playableSquares.forEach((gridIdx, arrayIdx) => {
 
 function selectPiece(boardIdx) {
     selectedPiece = boardIdx;
-    console.log("trying to select piece at index: ",boardIdx);
+    // console.log("trying to select piece at index: ",boardIdx);
 
     const gridIdx = getGridIdxFromBoardIdx(boardIdx);
     if (gridIdx === null || !squares[gridIdx].firstChild) return;
@@ -120,6 +120,7 @@ function selectPiece(boardIdx) {
 }
 
 function deselectPiece() {
+    // console.log("Deselecting piece at boardIdx:", selectedPiece)
     if (selectedPiece !== null) {
         const gridIdx = getGridIdxFromBoardIdx(selectedPiece);
         if (gridIdx !== null && squares[gridIdx].firstChild) {
@@ -136,9 +137,9 @@ function deselectPiece() {
 
 
 // Handle square clicks
-function handleSquareClick(evt) {
+function handleSquareClick(el) {
     // console.log("square clicked: ", el.currentTarget); great it works!
-    const square = evt.currentTarget;
+    const square = el.currentTarget;
     const boardIdx = parseInt(square.getAttribute('board-idx'));
     if (selectedPiece === null) {
         if (boardState[boardIdx] && boardState[boardIdx].player === currentPlayer) {
@@ -224,7 +225,6 @@ function getValidMoves(boardIdx) {
         }
     }
     return captures.length > 0 ? captures : moves;   // prioritize captures 
-    console.log("checking valid moves for: ", boardIdx);
 }
 
 
