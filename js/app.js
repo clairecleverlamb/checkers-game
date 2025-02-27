@@ -148,21 +148,6 @@ function getGridIdxFromBoardIdx(boardIdx) {
     return row * 8 + col;
 }
 
-// function getBoardIdxFromGridIdx(gridIdx) {
-//     const row = Math.floor(gridIdx / 8);
-//     const col = gridIdx % 8;
-//     // Check if it’s a playable dark square
-//     if ((row % 2 === 0 && col % 2 === 0) || (row % 2 === 1 && col % 2 === 1)) {
-//         const offset = Math.floor(col / 2);
-//         return row * 4 + offset;
-//     }
-//     return null; // 
-// }
-
-// let boardIdx = 5;
-// console.log(`Assigned board-idx: ${boardIdx} to grid index: ${getGridIdxFromBoardIdx(boardIdx)}`);
-// console.log("Trying to select piece at index: ", boardIdx, " (grid index: ", getGridIdxFromBoardIdx(boardIdx), ")");
-
 
 // helper functions for getValidMoves 
 function getRowColFromBoardIdx(boardIdx) {
@@ -183,35 +168,32 @@ function getBoardIndex(row, col) {
 function getValidMoves(boardIdx) {
     const piece = boardState[boardIdx];
     if (!piece) return [];
-    // console.log(`Piece at boardIdx ${boardIdx}:`, piece);
-    // console.log(`Calling getBoardIdxFromGridIdx with: ${boardIdx}`);
     const [row, col] = getRowColFromBoardIdx(boardIdx);
     const forward = piece.player === 'black' ? -1 : 1;
     const directions = piece.king ? [1, -1] : [forward];
-    let regularMoves = [];
-    let captures = [];
+    let moves = [];
 
     for (const dir of directions) {
-        // capture 
+        // Capture moves
         const leftMid = getBoardIndex(row + dir, col - 1);
         if (leftMid !== null && boardState[leftMid] && boardState[leftMid].player !== piece.player) {
             const jumpLeft = getBoardIndex(row + 2 * dir, col - 2);
-            if (jumpLeft !== null && !boardState[jumpLeft]) captures.push(jumpLeft);
+            if (jumpLeft !== null && !boardState[jumpLeft]) moves.push(jumpLeft);
         }
         const rightMid = getBoardIndex(row + dir, col + 1);
         if (rightMid !== null && boardState[rightMid] && boardState[rightMid].player !== piece.player) {
             const jumpRight = getBoardIndex(row + 2 * dir, col + 2);
-            if (jumpRight !== null && !boardState[jumpRight]) captures.push(jumpRight);
+            if (jumpRight !== null && !boardState[jumpRight]) moves.push(jumpRight);
         }
+
         // Regular moves
         const leftMove = getBoardIndex(row + dir, col - 1);
-        if (leftMove !== null && !boardState[leftMove]) regularMoves.push(leftMove);
+        if (leftMove !== null && !boardState[leftMove]) moves.push(leftMove);
         const rightMove = getBoardIndex(row + dir, col + 1);
-        if (rightMove !== null && !boardState[rightMove]) regularMoves.push(rightMove);
+        if (rightMove !== null && !boardState[rightMove]) moves.push(rightMove);
     }
-    return captures.length > 0 ? captures : regularMoves;
+    return moves;
 }
-
 
 
 function movePiece(toIndex) {
@@ -289,21 +271,21 @@ function makeKing(piece, toIndex) {
 
 
 function handleMultiJumpOrEndTurn(toIndex, rowTo) {
-    const newCaptures = getValidMoves(toIndex).filter(
-        move => Math.abs(Math.floor(move / 4) - rowTo) === 2
-    );
-    if (newCaptures.length > 0) {
-        selectedPiece = toIndex;
-        validMoves = newCaptures;
-        deselectPiece();
-        selectPiece(toIndex);
-    } else {
+    // const newCaptures = getValidMoves(toIndex).filter(
+    //     move => Math.abs(Math.floor(move / 4) - rowTo) === 2
+    // );
+    // if (newCaptures.length > 0) {
+    //     selectedPiece = toIndex;
+    //     validMoves = newCaptures;
+    //     deselectPiece();
+    //     selectPiece(toIndex);
+    // } else {
         deselectPiece();
         currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
         renderBoard();
         checkWin();
     }
-}
+// }
 
 // undo button: 
 document.querySelector('.undo').addEventListener('click', () => {
