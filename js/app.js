@@ -135,33 +135,23 @@ function deselectPiece() {
 
 // Handle square clicks
 function handleSquareClick(el) {
-    // console.log("square clicked: ", el.currentTarget); great it works!
     const square = el.currentTarget;
     const boardIdx = parseInt(square.getAttribute('board-idx'));
-    console.log(`Clicked square with boardIdx: ${boardIdx}, selectedPiece: ${selectedPiece}`);
 
     if (selectedPiece === null) {
-        console.log(`Checking if there's a piece at boardIdx ${boardIdx} for player ${currentPlayer}`);
-
         if (boardState[boardIdx] && boardState[boardIdx].player === currentPlayer) {
-            console.log(`Selecting piece at boardIdx: ${boardIdx}`);
             selectPiece(boardIdx);
         } else {
-            console.log(`No piece to select at boardIdx: ${boardIdx} or not current player's piece`);
+            // console.log(`No piece to select at boardIdx: ${boardIdx} or not current player's piece`);
         }
-    } else {
-        console.log(`Checking if boardIdx ${boardIdx} is a valid move. Valid moves: ${validMoves}`);
-        
+    } else {        
         if (validMoves.includes(boardIdx)) {
-            console.log(`Move is valid. Calling movePiece to boardIdx: ${boardIdx}`);
             movePiece(boardIdx);
         } else {
-            console.log(`Move is not valid. Deselecting piece.`);
             deselectPiece();
         }
     }
 }
-
 
 // Convert boardIdx to gridIdx 
 
@@ -343,9 +333,14 @@ document.querySelector('.undo').addEventListener('click', () => {
         boardState[to] = null;
 
         if (captured !== null) {
-            boardState[captured] = { player: player === 'black' ? 'white' : 'black', king: false };
-            const capturedGridIdx = getGridIdxFromBoardIdx(captured);
-            squares[capturedGridIdx].appendChild(createPiece(player === 'black' ? 'white' : 'black'));
+            boardState[captured.index] = captured.piece; // Restore full piece state
+            const capturedGridIdx = getGridIdxFromBoardIdx(captured.index);
+            const pieceElement = createPiece(captured.piece.player);
+            if (captured.piece.king) pieceElement.classList.add('king');
+            squares[capturedGridIdx].appendChild(pieceElement);
+            // boardState[captured] = { player: player === 'black' ? 'white' : 'black', king: false };
+            // const capturedGridIdx = getGridIdxFromBoardIdx(captured);
+            // squares[capturedGridIdx].appendChild(createPiece(player === 'black' ? 'white' : 'black'));
         }
 
         const fromGridIdx = getGridIdxFromBoardIdx(from);
@@ -399,7 +394,7 @@ document.querySelector('.reset').addEventListener('click', () => {
     moveHistory = [];
     // boardState = Array(32).fill(null);
     currentPlayer = 'black';
-    selectPiece = null;
+    selectedPiece = null;
     validMoves = [];
     initBoard();
 });
