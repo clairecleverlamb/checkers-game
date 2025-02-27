@@ -61,10 +61,10 @@ function initBoard() {
     boardState = Array(32).fill(null);
     // place 12 black pieces 0-11
     for (let i = 0; i < 12; i++) {
-        boardState[i] = { player: 'black', king: false };
+        boardState[i] = { player: 'white', king: false };
     }
     for (let i = 20; i < 32; i++) {
-        boardState[i] = { player: "white", king: false };
+        boardState[i] = { player: "black", king: false };
     }
     renderBoard();
     status.textContent = "Black's Turn";
@@ -125,33 +125,38 @@ function handleSquareClick(el) {
 // helper function 
 function getGridIdxFromBoardIdx(boardIdx) {
     const idxInPlayable = playableSquares.findIndex(gridIdx => {
-        parseInt(squares[gridIdx].getAttribute('board-idx')) === boardIdx
+        parseInt(squares[gridIdx].getAttribute('board-idx')) === boardIdx;
     });
+    if(idxInPlayable === -1) {
+        console.error(`No grid found for boardIdx" ${boardIdx}`);
+        return null;
+    }
     return playableSquares[idxInPlayable];
 }
 
 function selectPiece(boardIdx) {
     selectedPiece = boardIdx;
     const gridIdx = getGridIdxFromBoardIdx(boardIdx);
+    if(gridIdx === null || !squares[gridIdx.firstChild]) return;
     squares[gridIdx].firstChild.classList.add('selected');
     validMoves = getValidMoves(boardIdx);
     validMoves.forEach(moveIdx => {
         const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
-        squares[moveGridIdx].classList.add('valid-move');
+        if (moveGridIdx !== null) squares[moveGridIdx].classList.add('valid-move');
     });
 }
 
 function deselectPiece() {
     if (selectedPiece !== null) {
         const gridIdx = getGridIdxFromBoardIdx(selectedPiece);
-        if (squares[gridIdx].firstChild) {
+        if (gridIdx !== null && squares[gridIdx].firstChild) {
             squares[gridIdx].firstChild.classList.remove('selected');
         }
         validMoves.forEach(moveIdx => {
             const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
-            squares[moveGridIdx].classList.remove('valid-move');
+            if (moveGridIdx !== null) squares[moveGridIdx].classList.remove('valid-move');
         });
-        selectPiece = null;
+        selectedPiece = null;
         validMoves = [];
     }
 }
@@ -165,8 +170,8 @@ function getValidMoves(boardIdx) {
     const row = Math.floor(boardIdx / 4);
     const offset = boardIdx % 4;  // 0,1,2,3, help keep track
     const col = row % 2 === 0 ? 2 * offset + 1 : 2 * offset; // col where pieces go
-    const forward = player === 'black' ? -1 : 1; // black down(row-1) and white up
-    const directions = isKing ? [-1, 1] : [forward];
+    const forward = player === 'black' ? -1 : 1; // black down(row -1) and white up
+    const directions = isKing ? [1, -1] : [forward];
     let moves = [];
     let captures = [];
 
@@ -226,6 +231,8 @@ function getBoardIndex(row, col) {
     const offset = Math.floor(col / 2);
     return row * 4 + offset
 }
+console.log(getBoardIndex(7, 1));
+
 
 function movePiece(toIndex) {
     const fromIndex = selectedPiece;
@@ -260,7 +267,7 @@ function movePiece(toIndex) {
         to: toIndex,
         captured: capturedIdx,
         player: piece.player,
-        becameKing: (piece.player === 'black' && rowTo === 7) || (piece.player === 'white' && rowTo === 0)
+        becameKing: (piece.player === 'black' && rowTo === 0) || (piece.player === 'white' && rowTo === 7)
     })
 
     // move piece here 
@@ -273,7 +280,7 @@ function movePiece(toIndex) {
     toSquare.appendChild(fromSquare.firstChild);
 
     // King promotion
-    if ((piece.player === 'black' && rowTo === 7) || (piece.player === 'white' && rowTo === 0)) {
+    if ((piece.player === 'black' && rowTo === 0) || (piece.player === 'white' && rowTo === 7)) {
         piece.king = true;
         toSquare.firstChild.classList.add('king');
     }
@@ -309,15 +316,25 @@ document.querySelector('.undo').addEventListener('click', () => {
         // Reverse the move
         boardState[from] = boardState[to];
         boardState[to] = null;
+
         if (captured !== null) {
-            boardState[captured] = { player: player === 'black' ? 'white' : 'black', king: false };
-            squares[playableSquares[captured]].appendChild(createPiece(player === 'black' ? 'white' : 'black'));
+            boardState[captured] = {player: player === 'black' ? 'white' : 'black', king: false };
+            const capturedGridIdx = getGridIdxFromBoardIdx(captured);
+            squares[capturedGridIdx].appendChild(createPiece(player === 'black' ? 'white' : 'black'));
         }
-        squares[playableSquares[from]].appendChild(squares[playableSquares[to]].firstChild);
+        
+        const fromGridIdx = getGridIdxFromBoardIdx(from);
+        const toGridIdx = getGridIdxFromBoardIdx(to);
+        const fromSquare = squares[fromGridIdx];
+        const toSquare = squares[toGridIdx];
+        fromSquare.appendChild(toSquare.firstChild);
+
         if (becameKing) boardState[from].king = false;
 
         currentPlayer = player;
         deselectPiece();
+        renderBoard();
+        checkWin();
     }
 });
 
@@ -328,11 +345,34 @@ function createPiece(player) {
 }
 
 
+function checkWin() {
+    const blackPieces = boardState.filter(piece => piece && piece.player === 'black').length;
+    const whitePieces = boardState.filter(piece => piece && piece.player === 'white').length;
+    let winner = null;
+
+    if (blackPieces === 0) winner = 'White';
+    else if (whitePieces === 0) winner = 'Black';
+    else {
+        const playerPieces = boardState.filter(piece => piece && piece.player === currentPlayer);
+        const hasMoves = playerPieces.some(pieceIdx => {
+            const idx = boardState.indexOf(pieceIdx);
+            return getValidMoves(idx).length > 0;
+        });
+        if (!hasMoves) winner = currentPlayer === 'black' ? 'White' : 'Black';
+    }
+
+    if (winner) {
+        status.textContent = `${winner} Wins!`;
+        playableSquares.forEach(gridIdx => squares[gridIdx].removeEventListener('click', handleSquareClick));
+    } else {
+        status.textContent = `${currentPlayer === 'black' ? 'Black' : 'White'}'s Turn`;
+    }
+}
 
 // Create Reset functionality.
 document.querySelector('.reset').addEventListener('click', () => {
     moveHistory = [];
-    boardState = Array(32).fill(null);
+    // boardState = Array(32).fill(null);
     currentPlayer = 'black';
     selectPiece = null;
     validMoves = [];
