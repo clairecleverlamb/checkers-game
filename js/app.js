@@ -104,15 +104,14 @@ playableSquares.forEach((gridIdx, arrayIdx) => {
     }
 });
 
-
 function selectPiece(boardIdx) {
     selectedPiece = boardIdx;
-    // console.log("trying to select piece at index: ",boardIdx);
-
     const gridIdx = getGridIdxFromBoardIdx(boardIdx);
     if (gridIdx === null || !squares[gridIdx].firstChild) return;
     squares[gridIdx].firstChild.classList.add('selected');
+    
     validMoves = getValidMoves(boardIdx);
+    console.log(`Selected piece at ${boardIdx}, validMoves:`, validMoves);
     validMoves.forEach(moveIdx => {
         const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
         if (moveGridIdx !== null) squares[moveGridIdx].classList.add('valid-move');
@@ -120,7 +119,6 @@ function selectPiece(boardIdx) {
 }
 
 function deselectPiece() {
-    // console.log("Deselecting piece at boardIdx:", selectedPiece)
     if (selectedPiece !== null) {
         const gridIdx = getGridIdxFromBoardIdx(selectedPiece);
         if (gridIdx !== null && squares[gridIdx].firstChild) {
@@ -134,7 +132,6 @@ function deselectPiece() {
         validMoves = [];
     }
 }
-
 
 // Handle square clicks
 function handleSquareClick(el) {
@@ -214,7 +211,7 @@ function getValidMoves(boardIdx) {
     // console.log(`Piece at boardIdx ${boardIdx}:`, piece);
     // console.log(`Calling getBoardIdxFromGridIdx with: ${boardIdx}`);
     const [row, col] = getRowColFromBoardIdx(boardIdx);
-    const forward = piece.player === 'black' ? 1 : -1;
+    const forward = piece.player === 'black' ? -1 : 1;
     const directions = piece.king ? [1, -1] : [forward];
     let regularMoves = [];
     let captures = [];
