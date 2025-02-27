@@ -16,15 +16,14 @@ const status = document.querySelector('.status');
 
 
 const playableSquares = [
-    // these are checkers notation 
-    1, 3, 5, 7,      // Row 8: B8, D8, F8, H8 
-    8, 10, 12, 14,   // Row 7: A7, C7, E7, G7
-    17, 19, 21, 23,  // Row 6: B6, D6, F6, H6
-    24, 26, 28, 30,  // Row 5: A5, C5, E5, G5
-    33, 35, 37, 39,  // Row 4: B4, D4, F4, H4
-    40, 42, 44, 46,  // Row 3: A3, C3, E3, G3
-    49, 51, 53, 55,  // Row 2: B2, D2, F2, H2
-    56, 58, 60, 62   // Row 1: A1, C1, E1, G1
+    56, 58, 60, 62,  // Row 1: A1=0, C1=1, E1=2, G1=3
+    49, 51, 53, 55,  // Row 2: B2=4, D2=5, F2=6, H2=7
+    40, 42, 44, 46,  // Row 3: A3=8, C3=9, E3=10, G3=11
+    33, 35, 37, 39,  // Row 4: B4=12, D4=13, F4=14, H4=15
+    24, 26, 28, 30,  // Row 5: A5=16, C5=17, E5=18, G5=19
+    17, 19, 21, 23,  // Row 6: B6=20, D6=21, F6=22, H6=23
+    8, 10, 12, 14,   // Row 7: A7=24, C7=25, E7=26, G7=27
+    1, 3, 5, 7       // Row 8: B8=28, D8=29, F8=30, H8=31
 ];
 //   indexing 
 //   [ 
@@ -73,7 +72,6 @@ function initBoard() {
 
 // The state of the game should be rendered to the user.
 function renderBoard() {
-    // clear current pieces
     squares.forEach(square => {
         while (square.firstChild) {
             square.removeChild(square.firstChild);
@@ -82,7 +80,7 @@ function renderBoard() {
 
     // place pieces
     playableSquares.forEach((gridIdx, arrayIdx) => {
-        const boardIdx = 31 - arrayIdx;
+        const boardIdx = arrayIdx;
         if (boardState[boardIdx]) {
             const piece = document.createElement('div');
             piece.classList.add('piece', `${boardState[boardIdx].player}-piece`);
