@@ -73,15 +73,17 @@ function renderBoard() {
         }
     });
     // place pieces
-    playableSquares.forEach((gridIdx, arrayIdx) => {
-        const boardIdx = arrayIdx;
+    for (let boardIdx = 0; boardIdx < boardState.length; boardIdx++) {
         if (boardState[boardIdx]) {
+            const gridIdx = getGridIdxFromBoardIdx(boardIdx);
             const piece = document.createElement('div');
             piece.classList.add('piece', `${boardState[boardIdx].player}-piece`);
-            if (boardState[boardIdx].king) piece.classList.add('king');
+            if (boardState[boardIdx].king) {
+                piece.classList.add('king');
+            }
             squares[gridIdx].appendChild(piece);
         }
-    });
+    }
 }
 //---------------------- addEventListener ---------------------------//
 playableSquares.forEach((gridIdx, arrayIdx) => {
@@ -197,8 +199,6 @@ function getValidMoves(boardIdx) {
 
 
 function movePiece(toIndex) {
-    // console.log(`movePiece from ${selectedPiece} to ${toIndex}`);
-
     const fromIndex = selectedPiece;
     const piece = boardState[fromIndex];
     if (!piece) return;
@@ -206,18 +206,20 @@ function movePiece(toIndex) {
     const [rowTo, colTo] = getRowColFromBoardIdx(toIndex);
 
     let capturedIdx = null;
+    let capturedPiece = null;
 
     // captures 
     if (Math.abs(rowTo - rowFrom) === 2 && Math.abs(colTo - colFrom) === 2) {
         const midRow = (rowFrom + rowTo) / 2;
         const midCol = (colFrom + colTo) / 2;
-        const capturedIdx = getBoardIndex(midRow, midCol);
+        capturedIdx = getBoardIndex(midRow, midCol);
         if (capturedIdx !== null && boardState[capturedIdx]) {
+            capturedPiece = boardState[capturedIdx]; // store before remove;
             removeCapturedPiece(capturedIdx);
         }
     }
     // Record move
-    recordMove(fromIndex, toIndex, capturedIdx, piece);
+    recordMove(fromIndex, toIndex, capturedIdx !== null ? {index: capturedIdx, piece: capturedPiece} : null, piece);
     // Move piece
     movePieceOnBoard(fromIndex, toIndex, piece);
     // King Promotion
@@ -242,15 +244,16 @@ function getBoardIndex(row, col) {
     return row * 4 + offset;
 }
 
-function recordMove(fromIndex, toIndex, capturedIdx, piece) {
+function recordMove(fromIndex, toIndex, captured, piece) {
     moveHistory.push({
         from: fromIndex,
         to: toIndex,
-        captured: capturedIdx !== null ? { index: capturedIdx, piece: boardState[capturedIdx] } : null,
+        captured: captured, //contains { index: capturedIdx, piece: { player, king } } or null
         player: currentPlayer,
         becameKing: (piece.player === 'black' && Math.floor(toIndex / 4) === 7) || 
         (piece.player === 'white' && Math.floor(toIndex / 4) === 0)
     });
+    console.log('Stored captured:', moveHistory[moveHistory.length - 1].captured);
 }
 
 function movePieceOnBoard(fromIndex, toIndex, piece) {
@@ -271,7 +274,7 @@ function makeKing(piece, toIndex) {
 }
 
 
-function handleMultiJumpOrEndTurn(toIndex, rowTo) {
+function handleMultiJumpOrEndTurn() {
     // const newCaptures = getValidMoves(toIndex).filter(
     //     move => Math.abs(Math.floor(move / 4) - rowTo) === 2
     // );
@@ -299,21 +302,8 @@ document.querySelector('.undo').addEventListener('click', () => {
         boardState[to] = null;
 
         if (captured !== null) {
-            boardState[captured.index] = captured.piece; // Restore full piece state
-            const capturedGridIdx = getGridIdxFromBoardIdx(captured.index);
-            const pieceElement = createPiece(captured.piece.player);
-            if (captured.piece.king) pieceElement.classList.add('king');
-            squares[capturedGridIdx].appendChild(pieceElement);
-            // boardState[captured] = { player: player === 'black' ? 'white' : 'black', king: false };
-            // const capturedGridIdx = getGridIdxFromBoardIdx(captured);
-            // squares[capturedGridIdx].appendChild(createPiece(player === 'black' ? 'white' : 'black'));
+            boardState[captured.index] = captured.piece; // Restore the actual piece;
         }
-        // move pieces back visually 
-        const fromGridIdx = getGridIdxFromBoardIdx(from);
-        const toGridIdx = getGridIdxFromBoardIdx(to);
-        const fromSquare = squares[fromGridIdx];
-        const toSquare = squares[toGridIdx];
-        fromSquare.appendChild(toSquare.firstChild);
 
         if (becameKing) boardState[from].king = false;
 
@@ -357,7 +347,6 @@ function checkWin() {
 // Create Reset functionality.
 document.querySelector('.reset').addEventListener('click', () => {
     moveHistory = [];
-    // boardState = Array(32).fill(null);
     currentPlayer = 'black';
     selectedPiece = null;
     validMoves = [];
