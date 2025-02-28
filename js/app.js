@@ -1,5 +1,5 @@
 
-// CHEKCERS game!! HAVE FUN!
+// CHEKCERS!! HAVE FUN!
 
 let boardState = Array(32).fill(null);
 let currentPlayer = 'black';
@@ -22,18 +22,6 @@ const playableSquares = [
     57, 59, 61, 63  // Row 7
 ];
 
-// boardIdx 
-// [  
-//     0, 1, 2, 3, 
-//     4, 5, 6, 7,
-//     8, 9, 10, 11, 
-//     12, 13, 14, 15, 
-//     16, 17, 18, 19,
-//     20, 21, 22, 23, 
-//     24, 25, 26, 27,
-//     28, 29, 30, 31,
-//   ]
-
 const selectSound = new Audio('sounds/select.mp3');
 const moveSound = new Audio('sounds/move.mp3');
 const kingSound = new Audio('sounds/king.mp3');
@@ -41,8 +29,6 @@ const winSound = new Audio('sounds/win.mp3');
 const undoSound = new Audio('sounds/undo.mp3');
 const resetSound = new Audio('sounds/reset.mp3');
 
-
-// generate the checkers board
 function generateBoard() {
     grid.innerHTML = '';
     for (let row = 8; row >= 1; row--) {
@@ -57,9 +43,6 @@ generateBoard();
 
 const squares = Array.from(grid.querySelectorAll('div'));
 
-// Upon loading, the game state should be initialized, and a function should 
-//   be called to render this game state.
-
 function initBoard() {
     boardState = Array(32).fill(null);
     for (let i = 0; i < 12; i++) {
@@ -71,16 +54,12 @@ function initBoard() {
     renderBoard();
     status.textContent = "Black's Turn";
 }
-
-
-// The state of the game should be rendered to the user.
 function renderBoard() {
     squares.forEach(square => {
         while (square.firstChild) {
             square.removeChild(square.firstChild);
         }
     });
-    // place pieces
     for (let boardIdx = 0; boardIdx < boardState.length; boardIdx++) {
         if (boardState[boardIdx]) {
             const gridIdx = getGridIdxFromBoardIdx(boardIdx);
@@ -134,7 +113,6 @@ function deselectPiece() {
     }
 }
 
-
 function handleSquareClick(el) {
     const square = el.currentTarget;
     const boardIdx = parseInt(square.getAttribute('board-idx'));
@@ -151,13 +129,14 @@ function handleSquareClick(el) {
         }
     }
 }
-// Convert boardIdx to gridIdx 
+
 function getGridIdxFromBoardIdx(boardIdx) {
     const row = Math.floor(boardIdx / 4);
     const offset = boardIdx % 4;
     const col = row % 2 === 0 ? 2 * offset : 2 * offset + 1;
     return row * 8 + col;
 }
+
 
 // helper functions for getValidMoves 
 function getRowColFromBoardIdx(boardIdx) {
@@ -224,9 +203,7 @@ function movePiece(toIndex) {
             removeCapturedPiece(capturedIdx);
         }
     }
-    // Record move
     recordMove(fromIndex, toIndex, capturedIdx !== null ? {index: capturedIdx, piece: capturedPiece} : null, piece);
-    // Move piece
     movePieceOnBoard(fromIndex, toIndex, piece);
 
     boardState[toIndex] = piece;
@@ -251,7 +228,7 @@ function removeCapturedPiece(midIdx) {
 
 function getBoardIndex(row, col) {
     if (row < 0 || row > 7 || col < 0 || col > 7) return null;
-    if ((row % 2 === 0 && col % 2 !== 0) || (row % 2 === 1 && col % 2 !== 1)) return null; // Not playable
+    if ((row % 2 === 0 && col % 2 !== 0) || (row % 2 === 1 && col % 2 !== 1)) return null;
     const offset = Math.floor(col / 2);
     return row * 4 + offset;
 }
@@ -260,7 +237,7 @@ function recordMove(fromIndex, toIndex, captured, piece) {
     moveHistory.push({
         from: fromIndex,
         to: toIndex,
-        captured: captured, //contains { index: capturedIdx, piece: { player, king } } or null
+        captured: captured, 
         player: currentPlayer,
         becameKing: (piece.player === 'black' && Math.floor(toIndex / 4) === 0) || 
                      (piece.player === 'white' && Math.floor(toIndex / 4) === 7)
@@ -291,9 +268,7 @@ function handleMultiJumpOrEndTurn() {
         renderBoard();
         checkWin();
     }
-// }
 
-// undo button: 
 document.querySelector('.undo').addEventListener('click', () => {
     if (moveHistory.length > 0) {
         const lastMove = moveHistory.pop();
@@ -319,13 +294,11 @@ document.querySelector('.undo').addEventListener('click', () => {
     }
 });
 
-
 function createPiece(player) {
     const piece = document.createElement('div');
     piece.classList.add('piece', `${player}-piece`);
     return piece;
 }
-
 
 function checkWin() {
     const blackPieces = boardState.filter(piece => piece && piece.player === 'black').length;
@@ -340,7 +313,6 @@ function checkWin() {
         );
         if (!hasMoves) winner = currentPlayer === 'black' ? 'White' : 'Black';
     }
-
     if (winner) {
         status.textContent = `${winner} Wins!`;
         playSound(winSound);
@@ -350,7 +322,6 @@ function checkWin() {
     }
 }
 
-// Create Reset functionality.
 document.querySelector('.reset').addEventListener('click', () => {
     playSound(resetSound);
     moveHistory = [];
@@ -367,8 +338,7 @@ document.querySelector('.reset').addEventListener('click', () => {
 initBoard();
 
 
-// Additional features below
-
+// Additional features 
 let isMuted = false;
 const muteCheckbox = document.querySelector('.mute-checkbox');
 
@@ -382,7 +352,6 @@ function playSound(sound) {
     }
 }
 
-// change theme
 document.querySelector('.theme-switch').addEventListener('click', () => {
     const themeLink = document.getElementById('theme-link');
     if (themeLink.getAttribute('href') === './css/classic-theme.css') {
