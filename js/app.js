@@ -93,6 +93,7 @@ function renderBoard() {
         }
     }
 }
+
 //---------------------- addEventListener ---------------------------//
 playableSquares.forEach((gridIdx, arrayIdx) => {
     const square = squares[gridIdx];
@@ -116,7 +117,7 @@ function selectPiece(boardIdx) {
         const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
         if (moveGridIdx !== null) squares[moveGridIdx].classList.add('valid-move');
     });
-    console.log(`Selected piece at ${boardIdx}`);
+    // console.log(`Selected piece at ${boardIdx}`);
     selectSound.play();
 }
 
@@ -266,10 +267,9 @@ function recordMove(fromIndex, toIndex, captured, piece) {
         to: toIndex,
         captured: captured, //contains { index: capturedIdx, piece: { player, king } } or null
         player: currentPlayer,
-        becameKing: (piece.player === 'black' && Math.floor(toIndex / 4) === 7) || 
-        (piece.player === 'white' && Math.floor(toIndex / 4) === 0)
+        becameKing: (piece.player === 'black' && Math.floor(toIndex / 4) === 0) || 
+                     (piece.player === 'white' && Math.floor(toIndex / 4) === 7)
     });
-    // console.log('Stored captured:', moveHistory[moveHistory.length - 1].captured);
 }
 
 function movePieceOnBoard(fromIndex, toIndex, piece) {
@@ -286,9 +286,7 @@ function makeKing(piece, toIndex) {
     piece.king = true;
     const toGridIdx = getGridIdxFromBoardIdx(toIndex);
     squares[toGridIdx].firstChild.classList.add('king');
-    // console.log(`Promoted to king at ${toIndex}, king: ${piece.king}`);
     kingSound.play();
-
 }
 
 
@@ -304,7 +302,7 @@ function handleMultiJumpOrEndTurn() {
 document.querySelector('.undo').addEventListener('click', () => {
     if (moveHistory.length > 0) {
         const lastMove = moveHistory.pop();
-        const { from, to, captured, player, becameKing } = lastMove;
+        const {from, to, captured, player, becameKing} = lastMove;
 
         // Reverse the move
         boardState[from] = boardState[to];
@@ -316,7 +314,7 @@ document.querySelector('.undo').addEventListener('click', () => {
 
         if (becameKing) {
             boardState[from].king = false;
-            console.log(`Reverted king status at ${from}: ${boardState[from].king}`);
+            // console.log(`Reverted king status at ${from}: ${boardState[from].king}`);
         }
 
         currentPlayer = player;
