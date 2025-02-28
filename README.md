@@ -15,8 +15,9 @@ This project implements a digital version of the checkers game with an 8x8 board
 - Player pieces are visually distinguishable.
 - Turn-based mechanics with move validation.
 - Capturing and king promotion.
+- Valid moves highlighting and sound effects.
+- Undo & reset: undo last move and reset the game at any time.
 - Game-over detection and winner display.
-- Highlights last move for player clarity.
 
 ## 📜 Game Rules
 - The game is played on an 8x8 board with alternating dark and light squares.
