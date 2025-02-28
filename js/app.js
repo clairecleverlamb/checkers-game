@@ -94,7 +94,7 @@ function renderBoard() {
     }
 }
 
-//---------------------- addEventListener ---------------------------//
+//---------------------- main functions ---------------------------//
 playableSquares.forEach((gridIdx, arrayIdx) => {
     const square = squares[gridIdx];
     if (square) {
@@ -112,7 +112,6 @@ function selectPiece(boardIdx) {
     squares[gridIdx].firstChild.classList.add('selected');
     
     validMoves = getValidMoves(boardIdx);
-    // console.log(`Selected piece at ${boardIdx}, validMoves:`, validMoves);
     validMoves.forEach(moveIdx => {
         const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
         if (moveGridIdx !== null) squares[moveGridIdx].classList.add('valid-move');
@@ -135,7 +134,7 @@ function deselectPiece() {
     }
 }
 
-// Handle square clicks
+
 function handleSquareClick(el) {
     const square = el.currentTarget;
     const boardIdx = parseInt(square.getAttribute('board-idx'));
@@ -159,7 +158,6 @@ function getGridIdxFromBoardIdx(boardIdx) {
     const col = row % 2 === 0 ? 2 * offset : 2 * offset + 1;
     return row * 8 + col;
 }
-
 
 // helper functions for getValidMoves 
 function getRowColFromBoardIdx(boardIdx) {
@@ -311,7 +309,6 @@ document.querySelector('.undo').addEventListener('click', () => {
 
         if (becameKing) {
             boardState[from].king = false;
-            // console.log(`Reverted king status at ${from}: ${boardState[from].king}`);
         }
 
         currentPlayer = player;
