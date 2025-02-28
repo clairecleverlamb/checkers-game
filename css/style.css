@@ -1,12 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #c19a6b;
-    text-align: center;
+    font-family: 'Cinzel', serif;
+    background: url('https://www.toptal.com/designers/subtlepatterns/uploads/paper_3.png');
+    background-size: cover;
     margin: 0;
-    padding: 0;
+    padding: 20px;
+    color: #2b1a0a;
 }
 
 .container {
+    text-align: center;
     padding-top: 20px;
 }
 
@@ -15,6 +19,7 @@ h1 {
     font-weight: bold;
     color: #5c2e0d;
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
 }
 
 .controls {
@@ -25,7 +30,7 @@ h1 {
 }
 
 button {
-    background-color: #a97c50;
+    background: linear-gradient(135deg, #cab099, #ae5d27);
     border: 2px solid #5c2e0d;
     color: #3b1c07;
     font-size: 20px;
@@ -34,11 +39,38 @@ button {
     text-transform: uppercase;
     cursor: pointer;
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    border-radius: 5%;
 }
 
 button:hover {
     background-color: #8b5a2b;
 }
+
+.mute-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.mute-icon {
+    color: #4a2c12;
+    transition: color 0.3s ease;
+}
+
+.mute-checkbox {
+    width: 20px;
+    height: 20px;
+    accent-color: #8d5524;
+    cursor: pointer;
+}
+
+.mute-checkbox:checked + .mute-icon {
+    color: #c9743b;
+}
+
 
 .status {
     margin: 15px 0;              
