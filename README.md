@@ -86,7 +86,7 @@ function checkGameOver() {
 ## 🚀 Future Enhancements
 - 🎨 **Dark/Light mode toggle**
 - 🎉 **Confetti animation on win**
-- 🔊 **Sound effects for moves and captures**
+- 🔊 **Forced Jump options**
 - 🤖 **AI-powered computer opponent**
 - 💾 **Local storage for game state persistence**
 
