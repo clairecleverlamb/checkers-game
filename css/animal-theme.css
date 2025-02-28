@@ -1,0 +1,237 @@
+
+/* animals */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap');
+
+body {
+    font-family: 'Baloo 2', cursive;
+    background-image: url('catNdog.png');
+    background-size: cover;
+    margin: 0;
+    padding: 20px;
+    color: #2b1a0a;
+}
+
+.container {
+    text-align: center;
+    padding-top: 20px;
+}
+
+h1 {
+    font-size: 42px;
+    font-weight: bold;
+    color: #ff9800;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+button {
+    background: linear-gradient(135deg, #ffe0b2, #ffab91);
+    border: 2px solid #ff7043;
+    color: #3b1c07;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #ffccbc, #ff8a65);
+}
+
+.mute-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.mute-icon {
+    transition: color 0.3s ease;
+}
+
+.mute-checkbox {
+    width: 20px;
+    height: 20px;
+    accent-color: #ff7043;
+    cursor: pointer;
+}
+
+.mute-checkbox:checked + .mute-icon {
+    color: #ff9800;
+}
+
+.status {
+    margin: 15px 0;              
+    padding: 10px;               
+    font-size: 1.6em;            
+    font-weight: bold;           
+    color: #ff7043;              
+    text-align: center;          
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
+    background: rgba(255, 224, 178, 0.9);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    border: 2px solid #ff8a65;  
+    border-radius: 8px; 
+    max-width: 500px;                
+    margin-left: auto;           
+    margin-right: auto;          
+}
+
+.board-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+    background: #ffccbc;
+    border: 10px solid #ff7043;
+    padding: 10px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(8, 60px);
+    grid-template-rows: repeat(8, 60px);
+}
+
+.light {
+    background-color: #fffde7;
+    width: 60px;
+    height: 60px;
+}
+
+.dark {
+    background-color: #ffe0b2;
+    width: 60px;
+    height: 60px;
+}
+
+.column-labels {
+    display: flex;
+    justify-content: space-around;
+    margin: 5px 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: #6d4c41;
+}
+
+.col-label {
+    width: 60px;
+    text-align: center;
+}
+
+.piece {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.white-piece {
+    background-color: #fbe9e7;
+    border: 3px solid #ffcc80;
+    position: relative;
+}
+
+.white-piece::before {
+    content: '🐶';
+}
+
+.white-piece::after {
+    content: 'W';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #8d6e63;
+}
+
+.black-piece {
+    background-color: #ffe0b2;
+    border: 3px solid #ff8a65;
+    position: relative;
+}
+
+.black-piece::before {
+    content: '🐱';
+}
+
+.black-piece::after {
+    content: 'B';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #5d4037;
+}
+
+.selected {
+    border: 3px solid #ffeb3b !important;
+}
+
+.valid-move {
+    background-color: rgba(255, 235, 59, 0.5);
+}
+
+.king {
+    position: relative;
+}
+
+.king::after {
+    content: '🦁';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    z-index: 10;
+}
+
+.reset-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.reset {
+    background-color: #ff7043;
+    color: white;
+    font-size: 18px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset:hover {
+    background-color: #d84315;
+    transform: translateY(-3px);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
+}

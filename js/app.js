@@ -387,10 +387,10 @@ function playSound(sound) {
 
 // change theme
 document.querySelector('.theme-switch').addEventListener('click', () => {
-  const themeLink = document.getElementById('theme-link');
-  if (themeLink.getAttribute('href') === 'classic-theme.css') {
-    themeLink.setAttribute('href', 'animal-theme.css');
-  } else {
-    themeLink.setAttribute('href', 'classic-theme.css');
-  }
-});
+    const themeLink = document.getElementById('theme-link');
+    if (themeLink.getAttribute('href') === './css/classic-theme.css') {
+      themeLink.setAttribute('href', './css/animal-theme.css');
+    } else {
+      themeLink.setAttribute('href', './css/classic-theme.css');
+    }
+  });
