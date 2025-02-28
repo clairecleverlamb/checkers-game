@@ -117,8 +117,7 @@ function selectPiece(boardIdx) {
         const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
         if (moveGridIdx !== null) squares[moveGridIdx].classList.add('valid-move');
     });
-    // console.log(`Selected piece at ${boardIdx}`);
-    selectSound.play();
+    playSound(selectSound);
 }
 
 function deselectPiece() {
@@ -177,7 +176,6 @@ function getBoardIndex(row, col) {
     return row * 4 + offset;
 }
 
-
 function getValidMoves(boardIdx) {
     const piece = boardState[boardIdx];
     if (!piece) return [];
@@ -198,7 +196,6 @@ function getValidMoves(boardIdx) {
             const jumpRight = getBoardIndex(row + 2 * dir, col + 2);
             if (jumpRight !== null && !boardState[jumpRight]) moves.push(jumpRight);
         }
-
         // Regular moves
         const leftMove = getBoardIndex(row + dir, col - 1);
         if (leftMove !== null && !boardState[leftMove]) moves.push(leftMove);
@@ -242,7 +239,7 @@ function movePiece(toIndex) {
     }
 
     renderBoard();
-    moveSound.play();
+    playSound(moveSound);
     handleMultiJumpOrEndTurn(toIndex, rowTo);
 }
 
@@ -286,7 +283,7 @@ function makeKing(piece, toIndex) {
     piece.king = true;
     const toGridIdx = getGridIdxFromBoardIdx(toIndex);
     squares[toGridIdx].firstChild.classList.add('king');
-    kingSound.play();
+    playSound(kingSound);
 }
 
 
@@ -321,7 +318,7 @@ document.querySelector('.undo').addEventListener('click', () => {
         deselectPiece();
         renderBoard();
         checkWin();
-        undoSound.play();
+        playSound(undoSound);
     }
 });
 
@@ -349,7 +346,7 @@ function checkWin() {
 
     if (winner) {
         status.textContent = `${winner} Wins!`;
-        winSound.play();
+        playSound(winSound);
         playableSquares.forEach(gridIdx => squares[gridIdx].removeEventListener('click', handleSquareClick));
     } else {
         status.textContent = `${currentPlayer === 'black' ? 'Black' : 'White'}'s Turn`;
@@ -358,7 +355,7 @@ function checkWin() {
 
 // Create Reset functionality.
 document.querySelector('.reset').addEventListener('click', () => {
-    resetSound.play();
+    playSound(resetSound);
     moveHistory = [];
     currentPlayer = 'black';
     selectedPiece = null;
@@ -371,3 +368,15 @@ document.querySelector('.reset').addEventListener('click', () => {
 
 
 initBoard();
+let isMuted = false;
+const muteCheckbox = document.querySelector('.mute-checkbox');
+
+muteCheckbox.addEventListener('change', () => {
+    isMuted = muteCheckbox.checked;
+});
+
+function playSound(sound) {
+    if (!isMuted) {
+        sound.play();
+    }
+}
