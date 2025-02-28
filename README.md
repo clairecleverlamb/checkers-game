@@ -2,12 +2,9 @@
 
 A classic two-player checkers game with an interactive interface and rule-based logic. Play [CHECKERS](https://clairecleverlamb.github.io/Checkers-game/) here!
 
-
-![Checkers Board](https://media.istockphoto.com/id/155371886/photo/white-chess-king-among-lying-down-black-pawns-on-chessboard.webp?a=1&b=1&s=612x612&w=0&k=20&c=tgFD7BlBMA18O1JutbGdk5M-eFxsD0oHJqX7FLFJR04=)
-
 ---
 
-## 🎯 Overview
+## 🗺 Overview
 This project implements a digital version of the checkers game with an 8x8 board, turn-based gameplay, and rule enforcement. The sentimental value about this game is that it really brought me back to the childhood where I watched my grandpa played with his friends in the parks during the weekends 🏡🌴 we would hang out at the parks and chit-chating 💬, walking our dogs 🐕, having picnics 🧺🍿, and much more, that was one of the best memories for the little me 👧🏻 💌
 
 ## 🛠️ Techonologies Used
@@ -15,6 +12,13 @@ This project implements a digital version of the checkers game with an 8x8 board
 - JavaScript
 - CSS
 - [Rawpixel](https://www.rawpixel.com/) for designing my theme background 
+
+
+## Interface theme (Screenshots)
+![classic-themed Checkers Board](classic-theme.png)
+
+## Bonus: Interface theme #2 (Screenshots)
+![animal-themed Checkers Board](animal-theme.png)
 
 
 ## 🎮 Game Features
