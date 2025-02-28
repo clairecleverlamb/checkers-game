@@ -368,6 +368,10 @@ document.querySelector('.reset').addEventListener('click', () => {
 
 
 initBoard();
+
+
+// Additional features below
+
 let isMuted = false;
 const muteCheckbox = document.querySelector('.mute-checkbox');
 
@@ -380,3 +384,13 @@ function playSound(sound) {
         sound.play();
     }
 }
+
+// change theme
+document.querySelector('.theme-switch').addEventListener('click', () => {
+  const themeLink = document.getElementById('theme-link');
+  if (themeLink.getAttribute('href') === 'classic-theme.css') {
+    themeLink.setAttribute('href', 'animal-theme.css');
+  } else {
+    themeLink.setAttribute('href', 'classic-theme.css');
+  }
+});
