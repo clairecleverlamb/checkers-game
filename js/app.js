@@ -116,6 +116,7 @@ function selectPiece(boardIdx) {
         const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
         if (moveGridIdx !== null) squares[moveGridIdx].classList.add('valid-move');
     });
+    console.log(`Selected piece at ${boardIdx}`);
     selectSound.play();
 }
 
@@ -231,12 +232,17 @@ function movePiece(toIndex) {
     recordMove(fromIndex, toIndex, capturedIdx !== null ? {index: capturedIdx, piece: capturedPiece} : null, piece);
     // Move piece
     movePieceOnBoard(fromIndex, toIndex, piece);
+
+    boardState[toIndex] = piece;
+    boardState[fromIndex] = null;
     // King Promotion
     if ((piece.player === 'black' && rowTo === 0) || (piece.player === 'white' && rowTo === 7)) {
         makeKing(piece, toIndex);
     }
-    handleMultiJumpOrEndTurn(toIndex, rowTo);
+
+    renderBoard();
     moveSound.play();
+    handleMultiJumpOrEndTurn(toIndex, rowTo);
 }
 
 
@@ -263,7 +269,7 @@ function recordMove(fromIndex, toIndex, captured, piece) {
         becameKing: (piece.player === 'black' && Math.floor(toIndex / 4) === 7) || 
         (piece.player === 'white' && Math.floor(toIndex / 4) === 0)
     });
-    console.log('Stored captured:', moveHistory[moveHistory.length - 1].captured);
+    // console.log('Stored captured:', moveHistory[moveHistory.length - 1].captured);
 }
 
 function movePieceOnBoard(fromIndex, toIndex, piece) {
@@ -308,14 +314,17 @@ document.querySelector('.undo').addEventListener('click', () => {
             boardState[captured.index] = captured.piece; // Restore the actual piece;
         }
 
-        if (becameKing) boardState[from].king = false;
+        if (becameKing) {
+            boardState[from].king = false;
+            console.log(`Reverted king status at ${from}: ${boardState[from].king}`);
+        }
 
         currentPlayer = player;
         deselectPiece();
         renderBoard();
         checkWin();
+        undoSound.play();
     }
-    undoSound.play();
 });
 
 
