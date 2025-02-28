@@ -34,6 +34,14 @@ const playableSquares = [
 //     28, 29, 30, 31,
 //   ]
 
+const selectSound = new Audio('sounds/select.mp3');
+const moveSound = new Audio('sounds/move.mp3');
+const kingSound = new Audio('sounds/king.mp3');
+const winSound = new Audio('sounds/win.mp3');
+const undoSound = new Audio('sounds/undo.mp3');
+const resetSound = new Audio('sounds/reset.mp3');
+
+
 // generate the checkers board
 function generateBoard() {
     grid.innerHTML = '';
@@ -108,6 +116,7 @@ function selectPiece(boardIdx) {
         const moveGridIdx = getGridIdxFromBoardIdx(moveIdx);
         if (moveGridIdx !== null) squares[moveGridIdx].classList.add('valid-move');
     });
+    selectSound.play();
 }
 
 function deselectPiece() {
@@ -227,6 +236,7 @@ function movePiece(toIndex) {
         makeKing(piece, toIndex);
     }
     handleMultiJumpOrEndTurn(toIndex, rowTo);
+    moveSound.play();
 }
 
 
@@ -270,20 +280,13 @@ function makeKing(piece, toIndex) {
     piece.king = true;
     const toGridIdx = getGridIdxFromBoardIdx(toIndex);
     squares[toGridIdx].firstChild.classList.add('king');
-    console.log(`Promoted to king at ${toIndex}, king: ${piece.king}`);
+    // console.log(`Promoted to king at ${toIndex}, king: ${piece.king}`);
+    kingSound.play();
+
 }
 
 
 function handleMultiJumpOrEndTurn() {
-    // const newCaptures = getValidMoves(toIndex).filter(
-    //     move => Math.abs(Math.floor(move / 4) - rowTo) === 2
-    // );
-    // if (newCaptures.length > 0) {
-    //     selectedPiece = toIndex;
-    //     validMoves = newCaptures;
-    //     deselectPiece();
-    //     selectPiece(toIndex);
-    // } else {
         deselectPiece();
         currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
         renderBoard();
@@ -312,6 +315,7 @@ document.querySelector('.undo').addEventListener('click', () => {
         renderBoard();
         checkWin();
     }
+    undoSound.play();
 });
 
 
@@ -338,6 +342,7 @@ function checkWin() {
 
     if (winner) {
         status.textContent = `${winner} Wins!`;
+        winSound.play();
         playableSquares.forEach(gridIdx => squares[gridIdx].removeEventListener('click', handleSquareClick));
     } else {
         status.textContent = `${currentPlayer === 'black' ? 'Black' : 'White'}'s Turn`;
@@ -346,6 +351,7 @@ function checkWin() {
 
 // Create Reset functionality.
 document.querySelector('.reset').addEventListener('click', () => {
+    resetSound.play();
     moveHistory = [];
     currentPlayer = 'black';
     selectedPiece = null;
