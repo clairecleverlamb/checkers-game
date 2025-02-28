@@ -1,6 +1,6 @@
 # 🏁 Checkers Game
 
-A classic two-player checkers game with an interactive interface and rule-based logic.
+A classic two-player checkers game with an interactive interface and rule-based logic. Play [CHECKERS](https://clairecleverlamb.github.io/Checkers-game/) here!
 
 
 ![Checkers Board](https://media.istockphoto.com/id/155371886/photo/white-chess-king-among-lying-down-black-pawns-on-chessboard.webp?a=1&b=1&s=612x612&w=0&k=20&c=tgFD7BlBMA18O1JutbGdk5M-eFxsD0oHJqX7FLFJR04=)
@@ -15,8 +15,9 @@ This project implements a digital version of the checkers game with an 8x8 board
 - Player pieces are visually distinguishable.
 - Turn-based mechanics with move validation.
 - Capturing and king promotion.
+- Valid moves highlighting and sound effects.
+- Undo & reset: undo last move and reset the game at any time.
 - Game-over detection and winner display.
-- Highlights last move for player clarity.
 
 ## 📜 Game Rules
 - The game is played on an 8x8 board with alternating dark and light squares.
@@ -86,7 +87,7 @@ function checkGameOver() {
 ## 🚀 Future Enhancements
 - 🎨 **Dark/Light mode toggle**
 - 🎉 **Confetti animation on win**
-- 🔊 **Sound effects for moves and captures**
+- 🔊 **Forced Jump options**
 - 🤖 **AI-powered computer opponent**
 - 💾 **Local storage for game state persistence**
 
