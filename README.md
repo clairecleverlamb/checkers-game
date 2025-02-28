@@ -1,6 +1,6 @@
 # 🏁 Checkers Game
 
-A classic two-player checkers game with an interactive interface and rule-based logic. Play ![CHECKERS](https://clairecleverlamb.github.io/Checkers-game/) here!
+A classic two-player checkers game with an interactive interface and rule-based logic. Play [CHECKERS](https://clairecleverlamb.github.io/Checkers-game/) here!
 
 
 ![Checkers Board](https://media.istockphoto.com/id/155371886/photo/white-chess-king-among-lying-down-black-pawns-on-chessboard.webp?a=1&b=1&s=612x612&w=0&k=20&c=tgFD7BlBMA18O1JutbGdk5M-eFxsD0oHJqX7FLFJR04=)
