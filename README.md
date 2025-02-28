@@ -47,25 +47,16 @@ This project implements a digital version of the checkers game with an 8x8 board
 
 ## 🚁 Attributions
 
-- sound from [freesound_community](https://pixabay.com/users/freesound_community-46691455/) on pixabay;
+- Sound from [freesound_community](https://pixabay.com/users/freesound_community-46691455/) on pixabay;
+- Font from [Google Fonts](https://fonts.google.com/);
+- Graphics from [Graphic River](https://graphicriver.net/);
+- Icon generator [favicon](https://favicon.io/emoji-favicons/);
 
+Thanks for supporting! 💙
 
+---
 
-
-## 🗂️ Game Data Structure
-```javascript
-const playableSquares = [
-    0, 2, 4, 6,     // Row 0
-    9, 11, 13, 15,  // Row 1
-    25, 27, 29, 31, // Row 3
-    32, 34, 36, 38, // Row 4
-    41, 43, 45, 47, // Row 5
-    48, 50, 52, 54, // Row 6
-    57, 59, 61, 63  // Row 7
-];
-```
-
-## 🏗️ Game Functions
+## 🏗️ Some Code Snippets & Simple Logics 👩🏼‍💻
 ### 🔹 Initialize Game
 ```javascript
 function initBoard() {
