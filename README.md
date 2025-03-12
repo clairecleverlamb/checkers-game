@@ -9,8 +9,8 @@ This project implements a digital version of the checkers game with an 8x8 board
 
 ## 🛠️ Techonologies Used
 - HTML5 Canvas
-- JavaScript
-- CSS
+- JavaScript 
+- CSS (flexbox)
 - [Rawpixel](https://www.rawpixel.com/) for designing my theme background 
 
 
