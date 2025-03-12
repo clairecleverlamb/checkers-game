@@ -1,6 +1,6 @@
 # 🏁 Checkers Game - Project 1 
 
-A classic two-player checkers game with an interactive interface and rule-based logic. Play [CHECKERS](https://clairecleverlamb.github.io/Checkers-game/) here!
+A classic two-player checkers game with an interactive interface and rule-based logic. Play [CHECKERS](https://clairecleverlamb.github.io/checkers-game/) here!
 
 ---
 
